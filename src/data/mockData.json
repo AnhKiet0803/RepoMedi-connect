@@ -1,0 +1,892 @@
+  {
+    "users": [
+      {
+        "id": 1,
+        "name": "Admin User",
+        "email": "admin@mediconnect.com",
+        "password": "admin123",
+        "role": "admin",
+        "status": "active"
+      },
+      {
+        "id": 2,
+        "name": "Dr. Alice Nguyen",
+        "email": "doctor1@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 3,
+        "name": "Dr. David Tran",
+        "email": "doctor2@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 4,
+        "name": "Dr. Emily Le",
+        "email": "doctor3@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 5,
+        "name": "Dr. Peter Vu",
+        "email": "doctor4@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 6,
+        "name": "Dr. Sarah Pham",
+        "email": "doctor5@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 7,
+        "name": "Dr. John Bui",
+        "email": "doctor6@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 8,
+        "name": "Dr. Jennifer Do",
+        "email": "doctor7@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 9,
+        "name": "Dr. William Ho",
+        "email": "doctor8@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 10,
+        "name": "Dr. Hannah Lam",
+        "email": "doctor9@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 11,
+        "name": "Dr. Michael Phan",
+        "email": "doctor10@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 12,
+        "name": "Dr. Lisa Huynh",
+        "email": "doctor11@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 13,
+        "name": "Dr. Thomas Le",
+        "email": "doctor12@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 14,
+        "name": "Dr. Grace Nguyen",
+        "email": "doctor13@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 15,
+        "name": "Dr. Henry Phung",
+        "email": "doctor14@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 16,
+        "name": "Dr. Olivia Vo",
+        "email": "doctor15@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 17,
+        "name": "Dr. Daniel Nguyen",
+        "email": "doctor16@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 18,
+        "name": "Dr. Sophia Pham",
+        "email": "doctor17@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 19,
+        "name": "Dr. Ethan Tran",
+        "email": "doctor18@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 20,
+        "name": "Dr. Mia Vo",
+        "email": "doctor19@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 21,
+        "name": "Dr. Andrew Ho",
+        "email": "doctor20@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 22,
+        "name": "Dr. Natalie Do",
+        "email": "doctor21@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 23,
+        "name": "Dr. Jason Le",
+        "email": "doctor22@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 24,
+        "name": "Dr. Linda Phan",
+        "email": "doctor23@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 25,
+        "name": "Dr. Kevin Nguyen",
+        "email": "doctor24@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 26,
+        "name": "Dr. Chloe Hoang",
+        "email": "doctor25@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 27,
+        "name": "Dr. Jason Pham",
+        "email": "doctor26@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 28,
+        "name": "Dr. Emily Tran",
+        "email": "doctor27@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 29,
+        "name": "Dr. Alex Le",
+        "email": "doctor28@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 30,
+        "name": "Dr. Lily Nguyen",
+        "email": "doctor29@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 31,
+        "name": "Dr. Robert Vo",
+        "email": "doctor30@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 32,
+        "name": "Dr. Style Tran",
+        "email": "doctor31@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      },
+      {
+        "id": 33,
+        "name": "Dr. Gucci Nguyen",
+        "email": "doctor32@gmail.com",
+        "password": "12345",
+        "role": "doctor",
+        "status": "active"
+      }
+    ],
+    "specialties": [
+      {
+        "id": 1,
+        "name": "Orthopedics",
+        "description": "Orthopedic surgery and care"
+      },
+      {
+        "id": 2,
+        "name": "Neurology",
+        "description": "Neurological disorders and treatment"
+      },
+      {
+        "id": 3,
+        "name": "Gastroenterology",
+        "description": "Digestive system disorders"
+      },
+      {
+        "id": 4,
+        "name": "Cardiology",
+        "description": "Heart and cardiovascular care"
+      },
+      {
+        "id": 5,
+        "name": "ENT",
+        "description": "Ear, Nose, and Throat care"
+      },
+      {
+        "id": 6,
+        "name": "Spine Care",
+        "description": "Spine and back treatment"
+      }
+    ],
+    "doctors": [
+      {
+        "id": 1,
+        "name": "Dr. Alice Nguyen",
+        "email": "doctor1@gmail.com",
+        "password": "12345",
+        "specialty": "Spine Care",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0001",
+        "image": "../img/doctor/1.jpg"
+      },
+      {
+        "id": 2,
+        "name": "Dr. David Tran",
+        "email": "doctor2@gmail.com",
+        "password": "12345",
+        "specialty": "Cardiology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0002",
+        "image": "../img/doctor/1.png"
+      },
+      {
+        "id": 3,
+        "name": "Dr. Emily Le",
+        "email": "doctor3@gmail.com",
+        "password": "12345",
+        "specialty": "Cardiology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0003",
+        "image": "../img/doctor/3.jpg"
+      },
+      {
+        "id": 4,
+        "name": "Dr. Peter Vu",
+        "email": "doctor4@gmail.com",
+        "password": "12345",
+        "specialty": "Spine Care",
+        "hospital": "MediConnect",
+        "degree": "Master of Surgery (MS)",
+        "gender": "male",
+        "license_number": "LIC-0004",
+        "image": "../img/doctor/3.png"
+      },
+      {
+        "id": 5,
+        "name": "Dr. Sarah Pham",
+        "email": "doctor5@gmail.com",
+        "password": "12345",
+        "specialty": "Cardiology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0005",
+        "image": "../img/doctor/5.jpg"
+      },
+      {
+        "id": 6,
+        "name": "Dr. John Bui",
+        "email": "doctor6@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Philosophy (PhD)",
+        "gender": "male",
+        "license_number": "LIC-0006",
+        "image": "../img/doctor/3.webp"
+      },
+      {
+        "id": 7,
+        "name": "Dr. Jennifer Do",
+        "email": "doctor7@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Master of Medicine (MMed)",
+        "gender": "female",
+        "license_number": "LIC-0007",
+        "image": "../img/doctor/7.jpg"
+      },
+      {
+        "id": 8,
+        "name": "Dr. William Ho",
+        "email": "doctor8@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0008",
+        "image": "../img/doctor/12.webp"
+      },
+      {
+        "id": 9,
+        "name": "Dr. Hannah Lam",
+        "email": "doctor9@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0009",
+        "image": "../img/doctor/9.jpg"
+      },
+      {
+        "id": 10,
+        "name": "Dr. Michael Phan",
+        "email": "doctor10@gmail.com",
+        "password": "12345",
+        "specialty": "Spine Care",
+        "hospital": "MediConnect",
+        "degree": "Master of Surgery (MS)",
+        "gender": "male",
+        "license_number": "LIC-0010",
+        "image": "../img/doctor/13.webp"
+      },
+      {
+        "id": 11,
+        "name": "Dr. Lisa Huynh",
+        "email": "doctor11@gmail.com",
+        "password": "12345",
+        "specialty": "Spine Care",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0011",
+        "image": "../img/doctor/11.jpg"
+      },
+      {
+        "id": 12,
+        "name": "Dr. Thomas Le",
+        "email": "doctor12@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Philosophy (PhD)",
+        "gender": "male",
+        "license_number": "LIC-0012",
+        "image": "../img/doctor/1.jpg"
+      },
+      {
+        "id": 13,
+        "name": "Dr. Grace Nguyen",
+        "email": "doctor13@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Master of Medicine (MMed)",
+        "gender": "female",
+        "license_number": "LIC-0013",
+        "image": "../img/doctor/14.jpg"
+      },
+      {
+        "id": 14,
+        "name": "Dr. Henry Phung",
+        "email": "doctor14@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0014",
+        "image": "../img/doctor/14.jpg"
+      },
+      {
+        "id": 15,
+        "name": "Dr. Olivia Vo",
+        "email": "doctor15@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0015",
+        "image": "../img/doctor/15.jpg"
+      },
+      {
+        "id": 16,
+        "name": "Dr. Daniel Nguyen",
+        "email": "doctor16@gmail.com",
+        "password": "12345",
+        "specialty": "ENT (Ear, Nose, Throat)",
+        "hospital": "MediConnect",
+        "degree": "Master of Surgery (MS)",
+        "gender": "male",
+        "license_number": "LIC-0016",
+        "image": "../img/doctor/14.webp"
+      },
+      {
+        "id": 17,
+        "name": "Dr. Sophia Pham",
+        "email": "doctor17@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0017",
+        "image": "../img/doctor/17.jpg"
+      },
+      {
+        "id": 18,
+        "name": "Dr. Ethan Tran",
+        "email": "doctor18@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Philosophy (PhD)",
+        "gender": "male",
+        "license_number": "LIC-0018",
+        "image": "../img/doctor/18.jpg"
+      },
+      {
+        "id": 19,
+        "name": "Dr. Mia Vo",
+        "email": "doctor19@gmail.com",
+        "password": "12345",
+        "specialty": "Gastroenterology",
+        "hospital": "MediConnect",
+        "degree": "Master of Medicine (MMed)",
+        "gender": "female",
+        "license_number": "LIC-0019",
+        "image": "../img/doctor/19.jpg"
+      },
+      {
+        "id": 20,
+        "name": "Dr. Andrew Ho",
+        "email": "doctor20@gmail.com",
+        "password": "12345",
+        "specialty": "ENT (Ear, Nose, Throat)",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0020",
+        "image": "../img/doctor/20.jpg"
+      },
+      {
+        "id": 21,
+        "name": "Dr. Natalie Do",
+        "email": "doctor21@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0021",
+        "image": "../img/doctor/21.jpg"
+      },
+      {
+        "id": 22,
+        "name": "Dr. Jason Le",
+        "email": "doctor22@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Philosophy (PhD)",
+        "gender": "male",
+        "license_number": "LIC-0022",
+        "image": "../img/doctor/22.jpg"
+      },
+      {
+        "id": 23,
+        "name": "Dr. Linda Phan",
+        "email": "doctor23@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Master of Medicine (MMed)",
+        "gender": "female",
+        "license_number": "LIC-0023",
+        "image": "../img/doctor/23.jpg"
+      },
+      {
+        "id": 24,
+        "name": "Dr. Kevin Nguyen",
+        "email": "doctor24@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0024",
+        "image": "../img/doctor/24.jpg"
+      },
+      {
+        "id": 25,
+        "name": "Dr. Chloe Hoang",
+        "email": "doctor25@gmail.com",
+        "password": "12345",
+        "specialty": "Neurology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0025",
+        "image": "../img/doctor/25.jpg"
+      },
+      {
+        "id": 26,
+        "name": "Dr. Jason Pham",
+        "email": "doctor26@gmail.com",
+        "password": "12345",
+        "specialty": "Orthopedics",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0026",
+        "image": "../img/doctor/26.jpg"
+      },
+      {
+        "id": 27,
+        "name": "Dr. Emily Tran",
+        "email": "doctor27@gmail.com",
+        "password": "12345",
+        "specialty": "ENT (Ear, Nose, Throat)",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0027",
+        "image": "../img/doctor/27.jpg"
+      },
+      {
+        "id": 28,
+        "name": "Dr. Alex Le",
+        "email": "doctor28@gmail.com",
+        "password": "12345",
+        "specialty": "Orthopedics",
+        "hospital": "MediConnect",
+        "degree": "Master of Surgery (MS)",
+        "gender": "male",
+        "license_number": "LIC-0028",
+        "image": "../img/doctor/28.jpg"
+      },
+      {
+        "id": 29,
+        "name": "Dr. Lily Nguyen",
+        "email": "doctor29@gmail.com",
+        "password": "12345",
+        "specialty": "Orthopedics",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0029",
+        "image": "../img/doctor/29.jpg"
+      },
+      {
+        "id": 30,
+        "name": "Dr. Robert Vo",
+        "email": "doctor30@gmail.com",
+        "password": "12345",
+        "specialty": "ENT (Ear, Nose, Throat)",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Philosophy in Medicine (PhD)",
+        "gender": "male",
+        "license_number": "LIC-0030",
+        "image": "https://randomuser.me/api/portraits/men/77.jpg"
+      },
+      {
+        "id": 31,
+        "name": "Dr. Style Tran",
+        "email": "doctor31@gmail.com",
+        "password": "12345",
+        "specialty": "Orthopedics",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "male",
+        "license_number": "LIC-0031",
+        "image": "https://randomuser.me/api/portraits/women/68.jpg"
+      },
+      {
+        "id": 32,
+        "name": "Dr. Gucci Nguyen",
+        "email": "doctor32@gmail.com",
+        "password": "12345",
+        "specialty": "Cardiology",
+        "hospital": "MediConnect",
+        "degree": "Doctor of Medicine (MD)",
+        "gender": "female",
+        "license_number": "LIC-0032",
+        "image": "https://randomuser.me/api/portraits/men/62.jpg"
+      }
+    ],
+    "patients": [
+      {
+        "id": 1,
+        "firstName": "Ha Linh",
+        "fullName": "Ha Linh Tran",
+        "lastName": "Tran",
+        "email": "linh@gmail.com",
+        "password": "123456",
+        "phone": "0901234567",
+        "gender": "male",
+        "dob": "2003-05-18"
+      },
+      {
+        "id": 2,
+        "firstName": "Đuc Bo",
+        "lastName": "Tran",
+        "fullName": "Đuc Bo Tran",
+        "email": "bo@gmail.com",
+        "password": "abc123",
+        "phone": "0987654321",
+        "gender": "female",
+        "dob": "2000-08-25"
+      },
+      {
+        "id": 3,
+        "firstName": "Dog Bee",
+        "lastName": "Tran",
+        "fullName": "Dog Bee Tran",
+        "email": "Be@gmail.com",
+        "password": "abc12345",
+        "phone": "09876543216",
+        "gender": "female",
+        "dob": "2005-08-25"
+      },
+      {
+        "id": 4,
+        "firstName": "Coder",
+        "lastName": "Sieu",
+        "fullName": "Coder Sieu",
+        "email": "Coder@gmail.com",
+        "password": "abc12398",
+        "phone": "0987654321846",
+        "gender": "female",
+        "dob": "2000-07-25"
+      }
+    ],
+    "appointment_slots": [
+      {
+        "id": 1,
+        "doctor_id": 1,
+        "slot_date": "2025-10-25",
+        "start_time": "09:00:00",
+        "end_time": "09:30:00",
+        "is_available": true,
+        "created_at": "2025-10-01T08:00:00Z",
+        "updated_at": "2025-10-01T08:00:00Z"
+      }
+    ],
+    "appointments": [
+      {
+        "id": 1,
+        "slot_id": 1,
+        "patient_id": 1,
+        "symptoms": "Chest pain, shortness of breath",
+        "notes": "First visit",
+        "status": "confirmed",
+        "payment_status": "paid",
+        "meeting_link": "https://meet.example.com/abc123",
+        "created_at": "2025-10-20T08:00:00Z",
+        "updated_at": "2025-10-21T08:00:00Z",
+        "cancelled_at": null
+      }
+    ],
+    "medical_records": [
+      {
+        "id": 1,
+        "patient_id": 1,
+        "doctor_id": 1,
+        "appointment_id": 1,
+        "diagnosis": "Myocardial ischemia",
+        "prescription": "Aspirin, vasodilators",
+        "lab_results": "Abnormal ECG",
+        "notes": "Requires further monitoring",
+        "vital_signs": "BP: 140/90, HR: 95",
+        "follow_up_instructions": "Follow-up after one week",
+        "next_visit_date": "2025-10-28",
+        "created_at": "2025-10-21T08:00:00Z",
+        "updated_at": "2025-10-21T08:00:00Z"
+      }
+    ],
+    "reviews": [
+      {
+        "id": 1,
+        "patient_id": 1,
+        "doctor_id": 1,
+        "appointment_id": 1,
+        "rating": 5,
+        "comment": "Bác sĩ rất tận tâm và chuyên nghiệp.",
+        "is_approved": true,
+        "created_at": "2025-10-21T09:00:00Z",
+        "updated_at": "2025-10-21T09:00:00Z"
+      }
+    ],
+    "notifications": [
+      {
+        "id": 1,
+        "user_id": 2,
+        "type": "appointment",
+        "title": "Appointment Confirmed",
+        "message": "Your appointment with Dr. Alice Nguyen has been confirmed.",
+        "data": "{}",
+        "is_read": false,
+        "read_at": null,
+        "created_at": "2025-10-21T09:30:00Z"
+      }
+    ],
+    "contents": [
+      {
+        "id": 1,
+        "specialtyId": 1,
+        "specialty": "Orthopedics",
+        "title": "Arthroscopic Knee Replacement Technique for Faster Recovery",
+        "summary": "Minimally invasive arthroscopic knee replacement reduces post-surgery pain and shortens recovery time for osteoarthritis patients.",
+        "content": "# What Is Arthroscopic Knee Replacement?\nArthroscopic (minimally invasive) knee replacement uses small incisions with specialized instruments to reduce soft-tissue trauma and improve recovery.\n\n## Why Surgeons Choose It\n- Smaller wounds and less bleeding\n- Lower post-operative pain, faster mobilization\n- Shorter hospital stays and earlier rehab\n\n## Who Benefits Most\nPeople with **degenerative osteoarthritis** whose pain and stiffness persist despite medication, injections, and physiotherapy.\n\n## Recovery Roadmap\n1. **Days 1–3:** pain control, assisted walking, ROM 0–60°\n2. **Week 1–2:** quads activation, ROM 0–90°\n3. **Week 3–6:** strength + balance training, gait retraining\n4. **Week 6+:** return to low-impact sports (cycling, swimming)\n\n> **Tip:** A structured **physiotherapy plan** is as important as the procedure itself. Consistency beats intensity.\n\n## Risks & Precautions\nDVT, infection, stiffness, or implant malalignment are uncommon but possible. Follow anticoagulation, wound care, and rehab protocols closely.",
+        "image": "https://images.pexels.com/photos/6129049/pexels-photo-6129049.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "source": "MediConnect Journal",
+        "url": "#",
+        "date": "2025-10-12"
+    },
+    {
+        "id": 2,
+        "specialtyId": 2,
+        "specialty": "Neurology",
+        "title": "Early Warning Signs of Stroke You Should Know",
+        "summary": "The FAST rule is a simple way to recognize and act quickly when stroke symptoms appear.",
+        "content": "# Recognize Stroke Early with FAST\n**Stroke is an emergency.** Fast action limits brain damage and disability.\n\n## The FAST Rule\n- **F – Face:** one side droops when smiling\n- **A – Arms:** weakness or numbness in one arm\n- **S – Speech:** slurred or strange speech\n- **T – Time:** call emergency services **immediately**\n\n## Additional Red Flags\n- Sudden severe headache, different from usual\n- Loss of vision or double vision\n- Dizziness, imbalance, incoordination\n\n## Prevention You Can Start Today\n- Control **blood pressure**, **blood sugar**, **cholesterol**\n- Quit **smoking**; moderate alcohol\n- **Exercise** 150–300 minutes/week (moderate)\n- Mediterranean-style diet; reduce salt and trans fats\n\n> When in doubt, **treat as stroke** and call for help. Time is brain.",
+        "image": "https://images.pexels.com/photos/8369638/pexels-photo-8369638.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "source": "Health Today",
+        "url": "#",
+        "date": "2025-10-10"
+    },
+    {
+        "id": 3,
+        "specialtyId": 3,
+        "specialty": "Gastroenterology",
+        "title": "How to Eat to Reduce Acid Reflux",
+        "summary": "A low-fat diet, smaller meals, and avoiding late-night snacks are key to controlling GERD effectively.",
+        "content": "# Diet Strategies for Acid Reflux (GERD)\nNutrition and habits are first-line tools that complement medication.\n\n## Build Your Plate\n- **Low-fat proteins:** fish, poultry, legumes\n- **High-fiber sides:** oats, non-citrus fruit, vegetables\n- **Smaller, more frequent meals**; chew thoroughly\n- Stop eating **2–3 hours before bedtime**\n\n## Identify and Limit Triggers\n- Very **fatty**, **spicy**, or **fried** foods\n- **Chocolate**, **peppermint**, **caffeine**, **alcohol**\n- **Citrus** and **tomato** products (if symptomatic)\n\n## Helpful Habits\n- Elevate head of bed 10–15 cm\n- Maintain healthy weight; avoid tight belts/clothes\n- Keep a **symptom diary** to spot personal triggers\n\n> Consistency over perfection—small daily changes add up.",
+        "image": "https://images.unsplash.com/photo-1525054098605-8e762c017741?q=80&w=1200&auto=format&fit=crop",
+        "source": "Nutrition Daily",
+        "url": "#",
+        "date": "2025-10-08"
+    },
+    {
+        "id": 4,
+        "specialtyId": 4,
+        "specialty": "Cardiology",
+        "title": "How Much Exercise Is Enough for a Healthy Heart?",
+        "summary": "The WHO recommends 150-300 minutes of moderate activity per week to lower heart disease risk.",
+        "content": "# Weekly Exercise Targets for Heart Health\nAim for **150–300 minutes of moderate** or **75–150 minutes of vigorous** aerobic activity per week, plus **2 days of muscle-strengthening**.\n\n## What Counts\n- **Moderate:** brisk walking, easy cycling, dancing, gardening\n- **Vigorous:** running, fast cycling, HIIT, competitive sports\n\n## Make It Practical\n- 30 minutes/day × 5 days (moderate), or 25 minutes/day × 3 days (vigorous)\n- Split into **3 × 10-minute** bouts on busy days\n- Add **strength training** (legs, back, chest, core) 2 days/week\n\n## Extra Benefits\nLower blood pressure, improved lipids, reduced inflammation, better weight control, mood and sleep gains.\n\n> Start low, go slow—progress gradually to avoid injury and burnout.",
+        "image": "https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "source": "Cardio Weekly",
+        "url": "#",
+        "date": "2025-10-05"
+    },
+    {
+        "id": 5,
+        "specialtyId": 5,
+        "specialty": "ENT (Ear, Nose, Throat)",
+        "title": "Seasonal Allergic Rhinitis: Tips to Ease Symptoms",
+        "summary": "Saline nasal rinses and air purifiers can help reduce sneezing and congestion during allergy season.",
+        "content": "# Simple Ways to Relieve Seasonal Allergies\nSeasonal allergic rhinitis flares with pollen. Daily habits and smart treatments can reduce symptoms.\n\n## Home & Lifestyle\n- Use **HEPA air purifiers** in the bedroom\n- Shower and change after outdoor exposure\n- Close windows on **high-pollen** days\n\n## Symptom Relief\n- **Saline nasal irrigation** 1–2×/day\n- Consider **intranasal corticosteroids** for congestion\n- Non-drowsy **antihistamines** for sneezing/itchy nose\n\n## When to See a Doctor\nPersistent symptoms, recurrent sinusitis, or suspected asthma. Immunotherapy can help selected cases.\n\n> Combine avoidance + rinses + meds for best results.",
+        "image": "https://images.pexels.com/photos/7790075/pexels-photo-7790075.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "source": "Allergy News",
+        "url": "#",
+        "date": "2025-10-03"
+    },
+    {
+        "id": 6,
+        "specialtyId": 6,
+        "specialty": "Spine Care",
+        "title": "Back Pain from Sitting Too Long: 5 Effective Stretches",
+        "summary": "Plank, bird-dog, and hip flexor stretches help strengthen the spine and relieve chronic lower back pain.",
+        "content": "# Five Stretches to Undo Your Chair\nLong sitting stiffens hip flexors and weakens the posterior chain. These moves improve mobility and reduce pain.\n\n## The Big Five\n1. **Cat–Cow** (30–60s): mobilize the spine\n2. **Child’s Pose** (45–90s): lengthen back chain\n3. **Hip Flexor Stretch** (45–60s/side)\n4. **Bird-Dog** (8–10 reps/side): core + spinal stability\n5. **Glute Bridge** (10–15 reps): activate glutes/hamstrings\n\n## How Often\n- 1–2 rounds/day for desk workers\n- Pair with **hourly micro-breaks** and an ergonomic setup\n\n> Gentle daily practice beats occasional intense sessions.",
+        "image": "https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "source": "Spine Care Magazine",
+        "url": "#",
+        "date": "2025-10-01"
+    }
+    ],
+    "news": [
+      {
+        "id": 1,
+        "title": "MediConnect Launches Mobile App",
+        "content": "MediConnect announces the launch of its new mobile app, making it easier than ever to book appointments and connect with healthcare providers.",
+        "image": "https://example.com/images/news/mobile-app-launch.jpg",
+        "date": "2025-10-01"
+      },
+      {
+        "id": 2,
+        "title": "New Specialists Join Our Network",
+        "content": "MediConnect welcomes five new specialists to our growing network of healthcare professionals.",
+        "image": "https://example.com/images/news/new-specialists.jpg",
+        "date": "2025-09-28"
+      }
+    ]
+  }
