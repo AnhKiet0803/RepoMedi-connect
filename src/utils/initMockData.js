@@ -1,41 +1,43 @@
-// Load mock data into localStorage on first run so managers can read and mutate it
-import mockData from '../../data/mockData.json';
+import mockData from '../data/mockData.json';
 
 export default function initMockData() {
   try {
-    // Reset all data if not initialized
     if (!localStorage.getItem('data_initialized')) {
       console.log('Initializing mock data...');
-      
-      // Clear existing data
+
+      const currentUser = localStorage.getItem('currentUser');
+
       Object.keys(mockData).forEach(key => {
         localStorage.removeItem(key);
       });
 
-      // Initialize with mock data
       Object.keys(mockData).forEach(key => {
-        localStorage.setItem(key, JSON.stringify(mockData[key] || []));
+        const value = mockData[key];
+        localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
       });
 
-      // Mark as initialized
+      if (currentUser) {
+        localStorage.setItem('currentUser', currentUser);
+      }
+
       localStorage.setItem('data_initialized', 'true');
-      console.log('Mock data initialized successfully');
+      console.log('✅ Mock data initialized successfully');
     }
 
-    // Ensure all required keys exist
     const requiredKeys = [
       'users', 'doctors', 'patients', 'specialties',
       'appointments', 'medical_records', 'reviews',
-      'notifications', 'news' 
+      'notifications', 'news'
     ];
 
     requiredKeys.forEach(key => {
       if (!localStorage.getItem(key)) {
-        localStorage.setItem(key, JSON.stringify(mockData[key] || []));
+        const value = mockData[key];
+        localStorage.setItem(key, JSON.stringify(Array.isArray(value) ? value : []));
       }
     });
 
   } catch (error) {
-    console.error('Error initializing mock data:', error);
+    console.error('❌ Error initializing mock data:', error);
   }
 }

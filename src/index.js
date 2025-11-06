@@ -1,32 +1,32 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { createBrowserRouter, createRoutesFromElements, Route,RouterProvider,} from "react-router-dom";
-import initMockData from "./Page/utils/initMockData";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import initMockData from './utils/initMockData';
 
-//  Khởi tạo dữ liệu giả (nếu chưa có trong localStorage)
+// initialize mock data into localStorage (only sets keys that are missing)
 initMockData();
 
-// Cấu hình router (điều hướng toàn bộ về App)
 const router = createBrowserRouter(
-  createRoutesFromElements(<Route path="*" element={<App />} />),
+  createRoutesFromElements(
+    <Route path="*" element={<App />} />
+  ),
   {
     future: {
       v7_startTransition: true,
-      v7_relativeSplatPath: true,
-    },
+      v7_relativeSplatPath: true
+    }
   }
 );
 
-// Render ứng dụng React
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );
 
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-

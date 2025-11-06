@@ -5,9 +5,9 @@ import mockData from '../../data/mockData.json';
 const ContentManager = () => {
   const [contents, setContents] = useState([]);
   const [form, setForm] = useState({
-    title: '', 
-    category: '', 
-    body: '', 
+    title: '',
+    category: '',
+    body: '',
     published: true,
     image: ''
   });
@@ -16,8 +16,12 @@ const ContentManager = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
 
+  // Filter states
+  const [filterText, setFilterText] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+
   useEffect(() => {
-    // Initialize from mockData if contents don't exist in localStorage
     const stored = JSON.parse(localStorage.getItem('contents'));
     if (!stored) {
       localStorage.setItem('contents', JSON.stringify(mockData.contents));
@@ -32,45 +36,38 @@ const ContentManager = () => {
     try {
       localStorage.setItem('contents', JSON.stringify(updated));
     } catch (err) {
-      console.error('Failed to save contents to localStorage:', err);
-      // Inform the user and attempt to recover UI state
-      alert('Lưu nội dung thất bại: bộ nhớ trình duyệt đã đầy hoặc ảnh quá lớn. Hãy thử dùng ảnh nhỏ hơn.');
-      // Remove any large image from the form/preview to avoid repeated failures
+      console.error('Failed to save contents:', err);
+      alert('Failed to save. Browser storage may be full or image too large.');
       setPreviewImage(null);
       setForm(prev => ({ ...prev, image: '' }));
     }
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = e => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Compress and convert image to base64 before storing
     compressImageFile(file, 1024, 0.75)
       .then(base64 => {
-        // If base64 is still large, warn the user
-        const sizeKB = Math.round((base64.length * (3/4)) / 1024);
+        const sizeKB = Math.round((base64.length * (3 / 4)) / 1024);
         if (sizeKB > 200) {
-          if (!window.confirm(`Ảnh sau khi nén vẫn lớn (~${sizeKB}KB). Bạn có muốn tiếp tục lưu ảnh này? Hãy cân nhắc dùng ảnh nhỏ hơn.`)) {
-            return;
-          }
+          if (!window.confirm(`The image is still large (~${sizeKB}KB). Continue?`)) return;
         }
         setPreviewImage(base64);
         setForm(prev => ({ ...prev, image: base64 }));
       })
       .catch(err => {
         console.error('Image compression failed:', err);
-        alert('Không thể xử lý ảnh. Vui lòng thử ảnh khác hoặc giảm kích thước ảnh.');
+        alert('Could not process image. Please try another or reduce size.');
       });
   };
 
-  // Compress image using canvas and return base64 string
   const compressImageFile = (file, maxWidth = 1024, quality = 0.8) => {
     return new Promise((resolve, reject) => {
       try {
         const img = new Image();
         const reader = new FileReader();
-        reader.onload = (ev) => {
+        reader.onload = ev => {
           img.onload = () => {
             const canvas = document.createElement('canvas');
             const scale = Math.min(1, maxWidth / img.width);
@@ -78,21 +75,18 @@ const ContentManager = () => {
             canvas.height = img.height * scale;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            // Try to get compressed JPEG data URL
-            const mime = 'image/jpeg';
-            let dataUrl = canvas.toDataURL(mime, quality);
-            // If still too large and quality can be lowered, try progressively
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
             let q = quality;
-            while (dataUrl.length > 500000 && q > 0.4) { // ~500KB threshold
+            while (dataUrl.length > 500000 && q > 0.4) {
               q -= 0.1;
-              dataUrl = canvas.toDataURL(mime, q);
+              dataUrl = canvas.toDataURL('image/jpeg', q);
             }
             resolve(dataUrl);
           };
-          img.onerror = (e) => reject(e);
+          img.onerror = e => reject(e);
           img.src = ev.target.result;
         };
-        reader.onerror = (e) => reject(e);
+        reader.onerror = e => reject(e);
         reader.readAsDataURL(file);
       } catch (e) {
         reject(e);
@@ -104,11 +98,7 @@ const ContentManager = () => {
     e.preventDefault();
     if (editingId) {
       const updated = contents.map(c =>
-        c.id === editingId ? { 
-          ...c, 
-          ...form,
-          updated_at: new Date().toISOString()
-        } : c
+        c.id === editingId ? { ...c, ...form, updated_at: new Date().toISOString() } : c
       );
       saveToStorage(updated);
       setEditingId(null);
@@ -133,7 +123,7 @@ const ContentManager = () => {
   };
 
   const handleDelete = id => {
-    if (window.confirm('Bạn có chắc muốn xóa nội dung này?')) {
+    if (window.confirm('Are you sure you want to delete this content?')) {
       const updated = contents.filter(c => c.id !== id);
       saveToStorage(updated);
     }
@@ -158,36 +148,84 @@ const ContentManager = () => {
     setEditingId(null);
   };
 
+  // Apply filters
+  const filteredContents = contents.filter(c => {
+    const matchesText =
+      filterText === '' ||
+      c.title.toLowerCase().includes(filterText.toLowerCase()) ||
+      c.body.toLowerCase().includes(filterText.toLowerCase());
+    const matchesCategory =
+      filterCategory === '' ||
+      c.category.toLowerCase().includes(filterCategory.toLowerCase());
+    const matchesStatus =
+      filterStatus === '' ||
+      (filterStatus === 'published' && c.published) ||
+      (filterStatus === 'draft' && !c.published);
+    return matchesText && matchesCategory && matchesStatus;
+  });
+
   return (
     <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">📢 Quản lý Nội dung y tế</h2>
+        <h2 className="mb-0">📢 Medical Content Management</h2>
         <Button variant="primary" onClick={handleAdd}>
-          <i className="bi bi-plus-lg me-2"></i>Thêm nội dung mới
+          <i className="bi bi-plus-lg me-2"></i>Add New Content
         </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="mb-3 d-flex gap-2">
+        <Form.Control
+          type="text"
+          placeholder="Search by title or content..."
+          value={filterText}
+          onChange={e => setFilterText(e.target.value)}
+          style={{ maxWidth: '250px' }}
+        />
+        <Form.Control
+          type="text"
+          placeholder="Filter by category..."
+          value={filterCategory}
+          onChange={e => setFilterCategory(e.target.value)}
+          style={{ maxWidth: '200px' }}
+        />
+        <Form.Select
+          value={filterStatus}
+          onChange={e => setFilterStatus(e.target.value)}
+          style={{ maxWidth: '200px' }}
+        >
+          <option value="">-- All Statuses --</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </Form.Select>
       </div>
 
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th style={{width: "50px"}}>#</th>
-            <th style={{width: "25%"}}>Tiêu đề</th>
-            <th style={{width: "15%"}}>Danh mục</th>
-            <th>Nội dung</th>
-            <th style={{width: "120px"}}>Trạng thái</th>
-            <th style={{width: "200px"}}>Thao tác</th>
+            <th style={{ width: '50px' }}>#</th>
+            <th style={{ width: '25%' }}>Title</th>
+            <th style={{ width: '15%' }}>Category</th>
+            <th>Content</th>
+            <th style={{ width: '120px' }}>Status</th>
+            <th style={{ width: '200px' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {contents.map((content, index) => (
+          {filteredContents.map((content, index) => (
             <tr key={content.id}>
               <td>{index + 1}</td>
               <td>
                 {content.image && (
-                  <RBImage 
-                    src={content.image} 
+                  <RBImage
+                    src={content.image}
                     alt={content.title}
-                    style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      objectFit: 'cover',
+                      marginRight: '10px'
+                    }}
                     rounded
                   />
                 )}
@@ -195,30 +233,47 @@ const ContentManager = () => {
               </td>
               <td>{content.category}</td>
               <td>
-                <div style={{ maxHeight: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div
+                  style={{
+                    maxHeight: '100px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
                   {content.body}
                 </div>
               </td>
               <td>
                 <Badge bg={content.published ? 'success' : 'warning'}>
-                  {content.published ? '✅ Đã xuất bản' : '🚫 Nháp'}
+                  {content.published ? '✅ Published' : '🚫 Draft'}
                 </Badge>
               </td>
               <td>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => handleEdit(content)}>
-                  <i className="bi bi-pencil me-1"></i>Sửa
+                <Button
+                  variant="warning"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleEdit(content)}
+                >
+                  <i className="bi bi-pencil me-1"></i>Edit
                 </Button>
-                <Button 
-                  variant={content.published ? 'info' : 'success'} 
-                  size="sm" 
+                <Button
+                  variant={content.published ? 'info' : 'success'}
+                  size="sm"
                   className="me-2"
                   onClick={() => togglePublished(content.id)}
                 >
-                  <i className={`bi bi-${content.published ? 'eye-slash' : 'eye'} me-1`}></i>
-                  {content.published ? 'Ẩn' : 'Xuất bản'}
+                  <i
+                    className={`bi bi-${content.published ? 'eye-slash' : 'eye'} me-1`}
+                  ></i>
+                  {content.published ? 'Unpublish' : 'Publish'}
                 </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(content.id)}>
-                  <i className="bi bi-trash me-1"></i>Xóa
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleDelete(content.id)}
+                >
+                  <i className="bi bi-trash me-1"></i>Delete
                 </Button>
               </td>
             </tr>
@@ -228,15 +283,15 @@ const ContentManager = () => {
 
       <Modal show={showModal} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{editingId ? 'Sửa nội dung' : 'Thêm nội dung mới'}</Modal.Title>
+          <Modal.Title>{editingId ? 'Edit Content' : 'Add New Content'}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
             <Form.Group className="mb-3">
-              <Form.Label>Tiêu đề</Form.Label>
+              <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Nhập tiêu đề"
+                placeholder="Enter title"
                 value={form.title}
                 onChange={e => setForm({ ...form, title: e.target.value })}
                 required
@@ -244,10 +299,10 @@ const ContentManager = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Danh mục</Form.Label>
+              <Form.Label>Category</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Nhập danh mục (ví dụ: bệnh, chữa trị, phòng ngừa...)"
+                placeholder="Enter category (e.g., disease, treatment, prevention...)"
                 value={form.category}
                 onChange={e => setForm({ ...form, category: e.target.value })}
                 required
@@ -255,11 +310,11 @@ const ContentManager = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Nội dung</Form.Label>
+              <Form.Label>Content</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={5}
-                placeholder="Nhập nội dung bài viết"
+                placeholder="Enter article content"
                 value={form.body}
                 onChange={e => setForm({ ...form, body: e.target.value })}
                 required
@@ -267,14 +322,13 @@ const ContentManager = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Hình ảnh</Form.Label>
+              <Form.Label>Image</Form.Label>
               <div className="d-flex align-items-center gap-3">
                 <Button
                   variant="outline-primary"
                   onClick={() => fileInputRef.current.click()}
                 >
-                  <i className="bi bi-upload me-2"></i>
-                  Chọn ảnh
+                  <i className="bi bi-upload me-2"></i>Upload Image
                 </Button>
                 <input
                   type="file"
@@ -288,7 +342,11 @@ const ContentManager = () => {
                     <RBImage
                       src={previewImage || form.image}
                       alt="Preview"
-                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                      style={{
+                        width: '100px',
+                        height: '100px',
+                        objectFit: 'cover'
+                      }}
                       rounded
                     />
                     <Button
@@ -310,7 +368,7 @@ const ContentManager = () => {
             <Form.Group className="mb-3">
               <Form.Check
                 type="checkbox"
-                label="Xuất bản ngay"
+                label="Publish immediately"
                 checked={form.published}
                 onChange={e => setForm({ ...form, published: e.target.checked })}
               />
@@ -318,10 +376,10 @@ const ContentManager = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
-              Hủy
+              Cancel
             </Button>
             <Button variant="primary" type="submit">
-              {editingId ? 'Cập nhật' : 'Thêm mới'}
+              {editingId ? 'Update' : 'Add'}
             </Button>
           </Modal.Footer>
         </Form>
