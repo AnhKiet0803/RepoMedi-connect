@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from "react-router-dom";
 
 /**
  * ProtectedRoute usage examples:
@@ -6,15 +6,17 @@ import { Navigate, Outlet } from 'react-router-dom';
  * - Require role: <Route element={<ProtectedRoute requiredRoles={["admin"]} />} />
  */
 export default function ProtectedRoute({ requiredRoles }) {
-  // Lấy thông tin người dùng đã đăng nhập từ localStorage
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  // ✅ Đọc user từ cả Context-based và legacy key
+  const currentUser =
+    JSON.parse(localStorage.getItem("user")) ||
+    JSON.parse(localStorage.getItem("currentUser"));
 
-  // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+  // Nếu chưa đăng nhập
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
 
-  // Nếu có yêu cầu về vai trò và người dùng không có vai trò phù hợp, chuyển hướng về trang chủ
+  // Nếu có yêu cầu về role mà user không hợp lệ
   if (
     requiredRoles &&
     requiredRoles.length > 0 &&
@@ -23,6 +25,6 @@ export default function ProtectedRoute({ requiredRoles }) {
     return <Navigate to="/" replace />;
   }
 
-  // Nếu hợp lệ, render các route con
+  // ✅ Nếu hợp lệ → cho phép vào
   return <Outlet />;
 }
