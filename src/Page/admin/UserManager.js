@@ -10,7 +10,6 @@ const UserManager = () => {
     password: '',
     role: '',
     phone: '',
-    avatar: '',
     email_verified_at: '',
     active: true
   });
@@ -73,7 +72,6 @@ const UserManager = () => {
       password: '',
       role: '',
       phone: '',
-      avatar: '',
       email_verified_at: '',
       active: true
     });
@@ -111,7 +109,6 @@ const UserManager = () => {
       password: '',
       role: '',
       phone: '',
-      avatar: '',
       email_verified_at: '',
       active: true
     });
@@ -127,7 +124,6 @@ const UserManager = () => {
       password: '',
       role: '',
       phone: '',
-      avatar: '',
       email_verified_at: '',
       active: true
     });
@@ -272,15 +268,6 @@ const UserManager = () => {
                 placeholder="Enter phone number"
                 value={form.phone}
                 onChange={e => setForm({ ...form, phone: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Avatar (URL)</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter avatar URL"
-                value={form.avatar}
-                onChange={e => setForm({ ...form, avatar: e.target.value })}
               />
             </Form.Group>
             <Form.Group className="mb-3">
