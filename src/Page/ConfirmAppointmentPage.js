@@ -81,7 +81,7 @@ export default function ConfirmAppointmentPage() {
     } else {
       setDaysInMonth([]);
     }
-  }, [form.month, form.year]);
+  }, [form.month, form.year, form.day]);
 
   const handleExpiryChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
@@ -157,22 +157,50 @@ export default function ConfirmAppointmentPage() {
     setErrors({});
     try {
       await new Promise((res) => setTimeout(res, 1500));
-      const doctorIdValue = doctor?.id || doctor?.doctorId || doctor?.email || doctor?.name;
+
+      const doctorIdValue =
+        doctor?.id || doctor?.doctorId || doctor?.email || doctor?.name;
+
+      // Tạo lịch hẹn mới (thực sự tạo sau khi thanh toán)
       const appt = {
-        id: Date.now(),
+        id: Date.now(), // có thể bỏ, AppointmentContext sẽ tự tạo nếu thiếu
         doctorId: doctorIdValue,
         doctor: doctor?.name,
         specialty: doctor?.specialty,
         hospital: doctor?.hospital,
         date: selectedDate,
         time: selectedTime,
+        slot_id: `${doctorIdValue}_${selectedDate}_${selectedTime.split(" - ")[0]}`,
         status: "Haven't examined yet",
         patientName: `${form.firstName} ${form.lastName}`.trim(),
         patientEmail: form.email.trim(),
         userId: user?.id || null,
         reason: form.reason || "General Checkup",
       };
+
+      // Lưu lịch hẹn qua Context
       addAppointment(appt);
+
+      // Đánh dấu slot đã được dùng
+      try {
+        const storedSlots =
+          JSON.parse(localStorage.getItem("appointment_slots")) || [];
+        const updatedSlots = storedSlots.map((slot) =>
+          `${slot.doctor_id}_${slot.slot_date}_${slot.start_time}` === appt.slot_id
+            ? { ...slot, is_available: false }
+            : slot
+        );
+        localStorage.setItem("appointment_slots", JSON.stringify(updatedSlots));
+      } catch (err) {
+        console.error("❌ Failed to update slot:", err);
+      }
+
+      // Thông báo thay đổi để màn bác sĩ reload slot
+      localStorage.setItem("appointment_version", Date.now().toString());
+      window.dispatchEvent(new CustomEvent("appointments_updated"));
+      window.dispatchEvent(new Event("storage"));
+
+      // Thành công
       setIsPaid(true);
     } catch {
       setErrors({ submit: "Payment failed. Please try again." });
@@ -185,7 +213,10 @@ export default function ConfirmAppointmentPage() {
     return (
       <div className="container my-5 text-center">
         <h4>No appointment details found.</h4>
-        <button className="btn btn-outline-primary mt-3" onClick={() => navigate("/")}>
+        <button
+          className="btn btn-outline-primary mt-3"
+          onClick={() => navigate("/")}
+        >
           Back to Home
         </button>
       </div>
@@ -227,8 +258,10 @@ export default function ConfirmAppointmentPage() {
                     exit={{ x: 50, opacity: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <h5 className="text-center text-secondary mb-3">Step 1: Patient Information</h5>
-                    {/* Fields Step 1 */}
+                    <h5 className="text-center text-secondary mb-3">
+                      Step 1: Patient Information
+                    </h5>
+
                     <div className="row">
                       <div className="col-md-6 mb-3">
                         <label>First Name</label>
@@ -374,6 +407,7 @@ export default function ConfirmAppointmentPage() {
                     transition={{ duration: 0.4 }}
                   >
                     <h5 className="text-center text-secondary mb-3">Step 2: Payment Details</h5>
+
                     <div className="mb-3">
                       <label>Email for Receipt</label>
                       <input
@@ -431,8 +465,13 @@ export default function ConfirmAppointmentPage() {
             </form>
           ) : (
             <div className="text-center">
-              <div className="alert alert-success"><h5>Appointment successfully booked!</h5></div>
-              <p>Thank you — a receipt has been sent{form.receiptEmail ? ` to ${form.receiptEmail}` : ""}.</p>
+              <div className="alert alert-success">
+                <h5>Appointment successfully booked!</h5>
+              </div>
+              <p>
+                Thank you — a receipt has been sent
+                {form.receiptEmail ? ` to ${form.receiptEmail}` : ""}.
+              </p>
               <div className="d-flex justify-content-center gap-2">
                 <button
                   className="btn btn-primary"
@@ -443,7 +482,10 @@ export default function ConfirmAppointmentPage() {
                 >
                   Back to Home
                 </button>
-                <button className="btn btn-outline-secondary" onClick={() => window.print()}>
+                <button
+                  className="btn btn-outline-secondary"
+                  onClick={() => window.print()}
+                >
                   Print
                 </button>
               </div>

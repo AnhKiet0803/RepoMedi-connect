@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Container, Card, Alert } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import AuthContext from "../Context/Context";
@@ -11,33 +11,40 @@ export default function Login() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useContext(AuthContext);
+  const { login, user, role } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      // ✅ Lấy danh sách user, doctor, patient từ mockData
+      //  Gom tất cả user, doctor, patient lại (3 nhóm khác nhau)
       const users = mockData.users || [];
       const doctors = mockData.doctors || [];
       const patients = mockData.patients || [];
 
-      // ✅ Gom tất cả user vào chung 1 mảng
-      const allUsers = [...users, ...doctors, ...patients].map((u) => ({
-        ...u,
-        role:
-          u.role || (u.specialty ? "doctor" : "patient"), // doctor có specialty thì role = doctor
-        name:
-          u.name || u.fullName || `${u.firstName || ""} ${u.lastName || ""}`,
-      }));
+      //  Hợp nhất không trùng email
+      const mergeUsers = (arr1, arr2, arr3) => {
+        const map = new Map();
+        [...arr1, ...arr2, ...arr3].forEach((u) => {
+          const email = u.email?.toLowerCase();
+          if (!map.has(email)) {
+            map.set(email, {
+              ...u,
+              role: u.role || (u.specialty ? "doctor" : "patient"),
+              name:
+                u.name ||
+                u.fullName ||
+                `${u.firstName || ""} ${u.lastName || ""}`.trim(),
+            });
+          }
+        });
+        return Array.from(map.values());
+      };
 
-      console.log(
-        "📊 Available accounts:",
-        allUsers.map((u) => ({ email: u.email, role: u.role }))
-      );
+      const allUsers = mergeUsers(users, doctors, patients);
 
-      // ✅ Kiểm tra tài khoản hợp lệ
+      //  Tìm người dùng hợp lệ
       const foundUser = allUsers.find(
         (u) =>
           u.email?.toLowerCase() === email.toLowerCase().trim() &&
@@ -49,22 +56,21 @@ export default function Login() {
         return;
       }
 
-      console.log("✅ Login successful:", foundUser);
-
-      // ✅ Lưu user vào context
+      //  Lưu vào Context
       login(foundUser, foundUser.role);
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
+    }
+  };
 
-      // ✅ Nếu user bị redirect khi đặt lịch → quay lại trang đó
+  //  Điều hướng tự động khi Context cập nhật xong (fix lỗi navigate sớm)
+  useEffect(() => {
+    if (user && role) {
       if (location.state?.from) {
-        setTimeout(() => {
-          navigate(location.state.from, { replace: true });
-        }, 100);
-        return;
-      }
-
-      // ✅ Điều hướng theo vai trò (có độ trễ 100ms để Context cập nhật)
-      setTimeout(() => {
-        switch (foundUser.role) {
+        navigate(location.state.from, { replace: true });
+      } else {
+        switch (role) {
           case "admin":
             navigate("/admin");
             break;
@@ -76,12 +82,9 @@ export default function Login() {
             navigate("/");
             break;
         }
-      }, 100);
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("An unexpected error occurred");
+      }
     }
-  };
+  }, [user, role, navigate, location.state]);
 
   return (
     <Container className="mt-5" style={{ maxWidth: "450px" }}>

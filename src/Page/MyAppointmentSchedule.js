@@ -8,7 +8,6 @@ import mockData from "../data/mockData.json";
 import "./Page.css";
 import AppointmentDetailModal from "../Components/AppointmentDetailModal";
 
-
 export default function MyAppointments() {
   const { appointments, setAppointments } = useContext(AppointmentContext);
   const { addNotification } = useContext(NotificationContext);
@@ -20,46 +19,111 @@ export default function MyAppointments() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const patientsData = mockData.patients;
-  //  Hàm mở chi tiết cuộc hẹn
+
   const handleViewDetails = (appt) => {
     setSelectedAppointment(appt);
     setShowModal(true);
   };
 
-  //  Hàm quay lại trang chủ
   const handleBack = () => {
     setFadeClass("fade-out");
     setTimeout(() => navigate("/"), 400);
   };
 
-  //  Hàm huỷ cuộc hẹn
+  // Huỷ cuộc hẹn và mở lại slot
   const handleCancel = (id) => {
-    const confirmCancel = window.confirm("Are you sure you want to cancel this appointment?");
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this appointment?"
+    );
     if (!confirmCancel) return;
 
     const canceledAppt = appointments.find((a) => a.id === id);
+    if (!canceledAppt) return;
 
-    if (canceledAppt) {
-      try {
-        addNotification({
-          doctorId: canceledAppt.doctorId,
-          type: "cancel",
-          message: `❌ Appointment canceled by ${user?.fullName || canceledAppt.patientName} at ${canceledAppt.time} on ${canceledAppt.date}.`,
-        });
-      } catch (err) {
-        console.error("❌ Failed to send cancel notification:", err);
-      }
+    try {
+      // Thông báo cho bác sĩ
+      addNotification({
+        doctorId: canceledAppt.doctorId,
+        type: "cancel",
+        message: `❌ Appointment canceled by ${
+          user?.fullName || canceledAppt.patientName
+        } at ${canceledAppt.time} on ${canceledAppt.date}.`,
+        appointmentId: canceledAppt.id,
+        appointmentDate: canceledAppt.date,
+        appointmentTime: canceledAppt.time,
+      });
+    } catch (err) {
+      console.error("❌ Failed to send cancel notification:", err);
     }
 
-    const updatedAppointments = appointments.map((a) =>
+    // Cập nhật trạng thái trong context
+    const updatedAppointments = (appointments || []).map((a) =>
       a.id === id ? { ...a, status: "Canceled" } : a
     );
     setAppointments(updatedAppointments);
+
+    // Đồng bộ localStorage (để tab/trang khác thấy ngay)
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("appointments_")) {
+          const list = JSON.parse(localStorage.getItem(key) || "[]");
+          const newList = list.map((appt) =>
+            appt.id === id ? { ...appt, status: "Canceled" } : appt
+          );
+          localStorage.setItem(key, JSON.stringify(newList));
+        }
+      });
+    } catch (err) {
+      console.error("❌ Failed to persist canceled appointment:", err);
+    }
+
+    // Mở lại slot
+    try {
+      const storedSlots =
+        JSON.parse(localStorage.getItem("appointment_slots")) || [];
+      const updatedSlots = storedSlots.map((slot) =>
+        `${slot.doctor_id}_${slot.slot_date}_${slot.start_time}` ===
+        canceledAppt.slot_id
+          ? { ...slot, is_available: true }
+          : slot
+      );
+      localStorage.setItem("appointment_slots", JSON.stringify(updatedSlots));
+    } catch (err) {
+      console.error("❌ Failed to update slot:", err);
+    }
+
+    // Bắn event đồng bộ realtime
+    localStorage.setItem("appointment_version", Date.now().toString());
+    window.dispatchEvent(new CustomEvent("appointments_updated"));
+    window.dispatchEvent(new Event("storage"));
+
     setMessage("Appointment canceled successfully!");
     setTimeout(() => setMessage(""), 3000);
   };
 
-  const myAppointments = appointments || [];
+  let myAppointments = appointments || [];
+  if (user?.role === "patient") {
+    myAppointments = myAppointments.filter(
+      (a) => a.patientEmail?.toLowerCase() === user.email?.toLowerCase()
+    );
+  }
+
+  const canCancel = (status) => status === "Haven't examined yet";
+
+  // render Status với màu
+  const renderStatusText = (status) => {
+    const s = status || "Haven't examined yet";
+    if (s === "Examined") return <span className="text-success fw-semibold">Examined</span>;
+    if (s === "Canceled") return <span className="text-danger fw-semibold">Canceled</span>;
+    return <span className="text-secondary">Haven't examined yet</span>;
+  };
+
+  // chọn màu cho nút trạng thái ở cột Action khi không thể hủy
+  const statusButtonVariant = (status) => {
+    if (status === "Examined") return "outline-success";
+    if (status === "Canceled") return "outline-danger";
+    return "outline-secondary";
+  };
 
   return (
     <div className={`my-appointments-page ${fadeClass}`}>
@@ -78,10 +142,10 @@ export default function MyAppointments() {
                 <th>Date</th>
                 <th>Time</th>
                 <th>Patient</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
-
             <tbody>
               {myAppointments.map((a) => (
                 <tr key={a.id}>
@@ -94,19 +158,31 @@ export default function MyAppointments() {
                     {patientsData.find(
                       (p) =>
                         p.email.toLowerCase() === a.patientEmail?.toLowerCase()
-                    )?.fullName ||
-                      a.patientName ||
-                      "Unknown"}
+                    )?.fullName || a.patientName || "Unknown"}
                   </td>
+                  <td>{renderStatusText(a.status)}</td>
                   <td className="text-center d-flex gap-2 justify-content-center">
                     <Button variant="outline-info" size="sm" onClick={() => handleViewDetails(a)}>
                       View
                     </Button>
-                    <Button variant="outline-danger" size="sm" onClick={() => handleCancel(a.id)}
-                      disabled={a.status === "Canceled"} 
-                      style={{ opacity: a.status === "Canceled" ? 0.5 : 1,  cursor: a.status === "Canceled" ? "not-allowed" : "pointer",}}>
-                      {a.status === "Canceled" ? "Canceled" : "Cancel"}
-                    </Button>
+
+                    {canCancel(a.status) ? (
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleCancel(a.id)}
+                      >
+                        Cancel
+                      </Button>
+                    ) : (
+                      <Button
+                        variant={statusButtonVariant(a.status)}
+                        size="sm"
+                        disabled
+                      >
+                        {a.status || "Locked"}
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -119,8 +195,6 @@ export default function MyAppointments() {
           </Button>
         </div>
       </Container>
-
-      {/* Modal chi tiết lịch hẹn */}
       <AppointmentDetailModal
         show={showModal}
         onHide={() => setShowModal(false)}

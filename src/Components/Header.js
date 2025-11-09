@@ -6,7 +6,7 @@ import "../Styles/Header.css";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { user, role, logout } = useContext(AuthContext); // ✅ lấy user & logout từ context
+  const { user, role, logout } = useContext(AuthContext); 
 
   const displayName =
     user?.fullName ||

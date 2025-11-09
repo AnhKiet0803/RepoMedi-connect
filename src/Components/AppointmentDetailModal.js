@@ -36,10 +36,6 @@ export default function AppointmentDetailModal({ show, onHide, appointment }) {
               <th>Patient</th>
               <td>{appointment.patientName}</td>
             </tr>
-            <tr>
-              <th>Notes</th>
-              <td>{appointment.notes || "No additional notes"}</td>
-            </tr>
           </tbody>
         </Table>
       </Modal.Body>

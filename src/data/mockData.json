@@ -697,9 +697,9 @@
       },
       {
         "id": 2,
-        "firstName": "Đuc Bo",
+        "firstName": "Duc Bo",
         "lastName": "Tran",
-        "fullName": "Đuc Bo Tran",
+        "fullName": "Duc Bo Tran",
         "email": "bo@gmail.com",
         "password": "abc123",
         "phone": "0987654321",

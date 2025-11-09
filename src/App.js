@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import ProtectedRoute from './Components/ProtectedRoute';
+import ScrollToTop from "./Components/ScrollToTop";
 import initMockData from './utils/initMockData';
 import { Button } from 'react-bootstrap';
 // Contexts
@@ -50,10 +51,10 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-  if (!localStorage.getItem('data_initialized')) {
-    initMockData();
-  }
-}, []);
+    if (!localStorage.getItem('data_initialized')) {
+      initMockData();
+    }
+  }, []);
 
   const Layout = ({ children }) => (
     <>
@@ -70,6 +71,7 @@ function App() {
       <NotificationProvider>
         <AppointmentProvider>
           <div className="App">
+            <ScrollToTop />
             <Routes>
               {/* ===== PUBLIC ROUTES ===== */}
               <Route path="/" element={<Layout><HomePage /></Layout>} />
