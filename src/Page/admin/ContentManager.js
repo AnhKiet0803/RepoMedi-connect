@@ -1,198 +1,133 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Button, Form, Table, Badge, Image as RBImage } from 'react-bootstrap';
-import mockData from '../../data/mockData.json';
+import React, { useState, useRef } from "react";
+import { Modal, Button, Form, Table, Badge, Image as RBImage } from "react-bootstrap";
+import mockData from "../../data/mockData.json";
 
 const ContentManager = () => {
-  const [contents, setContents] = useState([]);
+  const [contents, setContents] = useState(
+    mockData.contents.map((c) => ({ ...c, published: true }))
+  );
+
   const [form, setForm] = useState({
-    title: '',
-    category: '',
-    body: '',
+    title: "",
+    specialty: "",
+    summary: "",
+    content: "",
     published: true,
-    image: ''
+    image: "",
   });
+
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Filter states
-  const [filterText, setFilterText] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
+  // Filters
+  const [filterText, setFilterText] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('contents'));
-    if (!stored) {
-      localStorage.setItem('contents', JSON.stringify(mockData.contents));
-      setContents(mockData.contents);
-    } else {
-      setContents(stored);
-    }
-  }, []);
-
-  const saveToStorage = updated => {
-    setContents(updated);
-    try {
-      localStorage.setItem('contents', JSON.stringify(updated));
-    } catch (err) {
-      console.error('Failed to save contents:', err);
-      alert('Failed to save. Browser storage may be full or image too large.');
-      setPreviewImage(null);
-      setForm(prev => ({ ...prev, image: '' }));
-    }
-  };
-
-  const handleImageUpload = e => {
+  const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    compressImageFile(file, 1024, 0.75)
-      .then(base64 => {
-        const sizeKB = Math.round((base64.length * (3 / 4)) / 1024);
-        if (sizeKB > 200) {
-          if (!window.confirm(`The image is still large (~${sizeKB}KB). Continue?`)) return;
-        }
-        setPreviewImage(base64);
-        setForm(prev => ({ ...prev, image: base64 }));
-      })
-      .catch(err => {
-        console.error('Image compression failed:', err);
-        alert('Could not process image. Please try another or reduce size.');
-      });
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+      setForm((prev) => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
-  const compressImageFile = (file, maxWidth = 1024, quality = 0.8) => {
-    return new Promise((resolve, reject) => {
-      try {
-        const img = new Image();
-        const reader = new FileReader();
-        reader.onload = ev => {
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const scale = Math.min(1, maxWidth / img.width);
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            let dataUrl = canvas.toDataURL('image/jpeg', quality);
-            let q = quality;
-            while (dataUrl.length > 500000 && q > 0.4) {
-              q -= 0.1;
-              dataUrl = canvas.toDataURL('image/jpeg', q);
-            }
-            resolve(dataUrl);
-          };
-          img.onerror = e => reject(e);
-          img.src = ev.target.result;
-        };
-        reader.onerror = e => reject(e);
-        reader.readAsDataURL(file);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  };
-
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (editingId) {
-      const updated = contents.map(c =>
-        c.id === editingId ? { ...c, ...form, updated_at: new Date().toISOString() } : c
+      const updated = contents.map((c) =>
+        c.id === editingId ? { ...c, ...form } : c
       );
-      saveToStorage(updated);
-      setEditingId(null);
+      setContents(updated);
     } else {
-      const newContent = {
-        ...form,
+      const newItem = {
         id: Date.now(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        ...form,
+        date: new Date().toISOString(),
+        published: form.published,
       };
-      saveToStorage([...contents, newContent]);
+      setContents([...contents, newItem]);
     }
-    setForm({ title: '', category: '', body: '', published: true, image: '' });
-    setPreviewImage(null);
     setShowModal(false);
+    setEditingId(null);
+    setForm({ title: "", specialty: "", summary: "", content: "", published: true, image: "" });
+    setPreviewImage(null);
   };
 
-  const handleEdit = c => {
-    setForm({ ...c });
+  const handleEdit = (c) => {
+    setForm(c);
     setEditingId(c.id);
+    setPreviewImage(c.image);
     setShowModal(true);
   };
 
-  const handleDelete = id => {
-    if (window.confirm('Are you sure you want to delete this content?')) {
-      const updated = contents.filter(c => c.id !== id);
-      saveToStorage(updated);
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this content?")) {
+      setContents(contents.filter((c) => c.id !== id));
     }
   };
 
-  const togglePublished = id => {
-    const updated = contents.map(c =>
+  const togglePublished = (id) => {
+    const updated = contents.map((c) =>
       c.id === id ? { ...c, published: !c.published } : c
     );
-    saveToStorage(updated);
+    setContents(updated);
   };
 
-  const handleAdd = () => {
-    setForm({ title: '', category: '', body: '', published: true });
-    setEditingId(null);
-    setShowModal(true);
-  };
-
-  const handleClose = () => {
-    setShowModal(false);
-    setForm({ title: '', category: '', body: '', published: true });
-    setEditingId(null);
-  };
-
-  // Apply filters
-  const filteredContents = contents.filter(c => {
-    const matchesText =
-      filterText === '' ||
+  // Filtering
+  const filteredContents = contents.filter((c) => {
+    const textMatch =
+      filterText === "" ||
       c.title.toLowerCase().includes(filterText.toLowerCase()) ||
-      c.body.toLowerCase().includes(filterText.toLowerCase());
-    const matchesCategory =
-      filterCategory === '' ||
-      c.category.toLowerCase().includes(filterCategory.toLowerCase());
-    const matchesStatus =
-      filterStatus === '' ||
-      (filterStatus === 'published' && c.published) ||
-      (filterStatus === 'draft' && !c.published);
-    return matchesText && matchesCategory && matchesStatus;
+      c.summary.toLowerCase().includes(filterText.toLowerCase()) ||
+      c.content.toLowerCase().includes(filterText.toLowerCase());
+
+    const categoryMatch =
+      filterCategory === "" ||
+      c.specialty.toLowerCase().includes(filterCategory.toLowerCase());
+
+    const statusMatch =
+      filterStatus === "" ||
+      (filterStatus === "published" && c.published) ||
+      (filterStatus === "draft" && !c.published);
+
+    return textMatch && categoryMatch && statusMatch;
   });
 
   return (
     <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">📢 Medical Content Management</h2>
-        <Button variant="primary" onClick={handleAdd}>
-          <i className="bi bi-plus-lg me-2"></i>Add New Content
+        <h2 className="mb-0">📚 Medical Content Manager</h2>
+        <Button variant="primary" onClick={() => setShowModal(true)}>
+          <i className="bi bi-plus-lg me-2"></i>Add Content
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="mb-3 d-flex gap-2">
+      <div className="mb-3 d-flex gap-2 flex-wrap">
         <Form.Control
           type="text"
           placeholder="Search by title or content..."
           value={filterText}
-          onChange={e => setFilterText(e.target.value)}
-          style={{ maxWidth: '250px' }}
+          onChange={(e) => setFilterText(e.target.value)}
+          style={{ maxWidth: "250px" }}
         />
         <Form.Control
           type="text"
           placeholder="Filter by category..."
           value={filterCategory}
-          onChange={e => setFilterCategory(e.target.value)}
-          style={{ maxWidth: '200px' }}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{ maxWidth: "200px" }}
         />
         <Form.Select
           value={filterStatus}
-          onChange={e => setFilterStatus(e.target.value)}
-          style={{ maxWidth: '200px' }}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={{ maxWidth: "200px" }}
         >
           <option value="">-- All Statuses --</option>
           <option value="published">Published</option>
@@ -203,49 +138,39 @@ const ContentManager = () => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th style={{ width: '50px' }}>#</th>
-            <th style={{ width: '25%' }}>Title</th>
-            <th style={{ width: '15%' }}>Category</th>
-            <th>Content</th>
-            <th style={{ width: '120px' }}>Status</th>
-            <th style={{ width: '200px' }}>Actions</th>
+            <th>#</th>
+            <th>Title</th>
+            <th>Specialty</th>
+            <th>Summary</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {filteredContents.map((content, index) => (
-            <tr key={content.id}>
-              <td>{index + 1}</td>
+          {filteredContents.map((c, i) => (
+            <tr key={c.id}>
+              <td>{i + 1}</td>
               <td>
-                {content.image && (
+                {c.image && (
                   <RBImage
-                    src={content.image}
-                    alt={content.title}
+                    src={c.image}
+                    alt={c.title}
                     style={{
-                      width: '50px',
-                      height: '50px',
-                      objectFit: 'cover',
-                      marginRight: '10px'
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                      marginRight: "10px",
                     }}
                     rounded
                   />
                 )}
-                {content.title}
+                {c.title}
               </td>
-              <td>{content.category}</td>
+              <td>{c.specialty}</td>
+              <td>{c.summary}</td>
               <td>
-                <div
-                  style={{
-                    maxHeight: '100px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis'
-                  }}
-                >
-                  {content.body}
-                </div>
-              </td>
-              <td>
-                <Badge bg={content.published ? 'success' : 'warning'}>
-                  {content.published ? '✅ Published' : '🚫 Draft'}
+                <Badge bg={c.published ? "success" : "warning"}>
+                  {c.published ? "Published" : "Draft"}
                 </Badge>
               </td>
               <td>
@@ -253,25 +178,22 @@ const ContentManager = () => {
                   variant="warning"
                   size="sm"
                   className="me-2"
-                  onClick={() => handleEdit(content)}
+                  onClick={() => handleEdit(c)}
                 >
                   <i className="bi bi-pencil me-1"></i>Edit
                 </Button>
                 <Button
-                  variant={content.published ? 'info' : 'success'}
+                  variant={c.published ? "info" : "success"}
                   size="sm"
                   className="me-2"
-                  onClick={() => togglePublished(content.id)}
+                  onClick={() => togglePublished(c.id)}
                 >
-                  <i
-                    className={`bi bi-${content.published ? 'eye-slash' : 'eye'} me-1`}
-                  ></i>
-                  {content.published ? 'Unpublish' : 'Publish'}
+                  {c.published ? "Unpublish" : "Publish"}
                 </Button>
                 <Button
                   variant="danger"
                   size="sm"
-                  onClick={() => handleDelete(content.id)}
+                  onClick={() => handleDelete(c.id)}
                 >
                   <i className="bi bi-trash me-1"></i>Delete
                 </Button>
@@ -281,9 +203,10 @@ const ContentManager = () => {
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={handleClose} size="lg">
+      {/* Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{editingId ? 'Edit Content' : 'Add New Content'}</Modal.Title>
+          <Modal.Title>{editingId ? "Edit Content" : "Add New Content"}</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
@@ -291,20 +214,29 @@ const ContentManager = () => {
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter title"
                 value={form.title}
-                onChange={e => setForm({ ...form, title: e.target.value })}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Category</Form.Label>
+              <Form.Label>Specialty</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter category (e.g., disease, treatment, prevention...)"
-                value={form.category}
-                onChange={e => setForm({ ...form, category: e.target.value })}
+                value={form.specialty}
+                onChange={(e) => setForm({ ...form, specialty: e.target.value })}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Summary</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                value={form.summary}
+                onChange={(e) => setForm({ ...form, summary: e.target.value })}
                 required
               />
             </Form.Group>
@@ -314,9 +246,8 @@ const ContentManager = () => {
               <Form.Control
                 as="textarea"
                 rows={5}
-                placeholder="Enter article content"
-                value={form.body}
-                onChange={e => setForm({ ...form, body: e.target.value })}
+                value={form.content}
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
                 required
               />
             </Form.Group>
@@ -328,7 +259,7 @@ const ContentManager = () => {
                   variant="outline-primary"
                   onClick={() => fileInputRef.current.click()}
                 >
-                  <i className="bi bi-upload me-2"></i>Upload Image
+                  Upload Image
                 </Button>
                 <input
                   type="file"
@@ -338,48 +269,33 @@ const ContentManager = () => {
                   onChange={handleImageUpload}
                 />
                 {(previewImage || form.image) && (
-                  <div className="position-relative">
-                    <RBImage
-                      src={previewImage || form.image}
-                      alt="Preview"
-                      style={{
-                        width: '100px',
-                        height: '100px',
-                        objectFit: 'cover'
-                      }}
-                      rounded
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      className="position-absolute top-0 end-0"
-                      onClick={() => {
-                        setPreviewImage(null);
-                        setForm(prev => ({ ...prev, image: '' }));
-                      }}
-                    >
-                      <i className="bi bi-x"></i>
-                    </Button>
-                  </div>
+                  <RBImage
+                    src={previewImage || form.image}
+                    alt="Preview"
+                    style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                    rounded
+                  />
                 )}
               </div>
             </Form.Group>
 
-            <Form.Group className="mb-3">
+            <Form.Group>
               <Form.Check
                 type="checkbox"
-                label="Publish immediately"
+                label="Published"
                 checked={form.published}
-                onChange={e => setForm({ ...form, published: e.target.checked })}
+                onChange={(e) =>
+                  setForm({ ...form, published: e.target.checked })
+                }
               />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
             <Button variant="primary" type="submit">
-              {editingId ? 'Update' : 'Add'}
+              {editingId ? "Update" : "Add"}
             </Button>
           </Modal.Footer>
         </Form>
