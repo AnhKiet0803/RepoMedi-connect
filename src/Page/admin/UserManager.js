@@ -1,4 +1,3 @@
-// src/admin/UserManager.js
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table, Badge } from 'react-bootstrap';
 
@@ -13,6 +12,7 @@ const UserManager = () => {
     email_verified_at: '',
     active: true
   });
+  const [errors, setErrors] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [filterRole, setFilterRole] = useState('all');
@@ -34,8 +34,34 @@ const UserManager = () => {
     localStorage.setItem('patients', JSON.stringify(updatedPatients));
   };
 
+  // ✅ Validate inputs
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.name.trim()) newErrors.name = 'Name is required.';
+    else if (form.name.trim().length < 3)
+      newErrors.name = 'Name must be at least 3 characters.';
+
+    if (!form.email.trim()) newErrors.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(form.email))
+      newErrors.email = 'Invalid email format.';
+
+    if (!editingId && (!form.password || form.password.length < 6))
+      newErrors.password = 'Password must be at least 6 characters.';
+
+    if (!form.role) newErrors.role = 'Role is required.';
+
+    if (form.phone && !/^[0-9]{9,11}$/.test(form.phone))
+      newErrors.phone = 'Phone number must contain 9–11 digits.';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     if (editingId) {
       const updated = users.map(u =>
         u.id === editingId ? { ...u, ...form, updated_at: new Date().toISOString() } : u
@@ -66,23 +92,14 @@ const UserManager = () => {
       }
     }
 
-    setForm({
-      name: '',
-      email: '',
-      password: '',
-      role: '',
-      phone: '',
-      email_verified_at: '',
-      active: true
-    });
-    setShowModal(false);
-    setEditingId(null);
+    handleClose();
   };
 
   const handleEdit = (u) => {
     setForm({ ...u });
     setEditingId(u.id);
     setShowModal(true);
+    setErrors({});
   };
 
   const handleDelete = (id) => {
@@ -114,6 +131,7 @@ const UserManager = () => {
     });
     setEditingId(null);
     setShowModal(true);
+    setErrors({});
   };
 
   const handleClose = () => {
@@ -128,6 +146,7 @@ const UserManager = () => {
       active: true
     });
     setEditingId(null);
+    setErrors({});
   };
 
   const filteredUsers = users.filter(u => {
@@ -225,9 +244,11 @@ const UserManager = () => {
                 placeholder="Enter name"
                 value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })}
-                required
+                isInvalid={!!errors.name}
               />
+              <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
               <Form.Control
@@ -235,9 +256,11 @@ const UserManager = () => {
                 placeholder="Enter email"
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
-                required
+                isInvalid={!!errors.email}
               />
+              <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -245,22 +268,27 @@ const UserManager = () => {
                 placeholder="Enter password"
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
+                isInvalid={!!errors.password}
                 required={!editingId}
               />
+              <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Role</Form.Label>
               <Form.Select
                 value={form.role}
                 onChange={e => setForm({ ...form, role: e.target.value })}
-                required
+                isInvalid={!!errors.role}
               >
                 <option value="">-- Select role --</option>
                 <option value="admin">Admin</option>
                 <option value="doctor">Doctor</option>
                 <option value="patient">Patient</option>
               </Form.Select>
+              <Form.Control.Feedback type="invalid">{errors.role}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Phone</Form.Label>
               <Form.Control
@@ -268,8 +296,11 @@ const UserManager = () => {
                 placeholder="Enter phone number"
                 value={form.phone}
                 onChange={e => setForm({ ...form, phone: e.target.value })}
+                isInvalid={!!errors.phone}
               />
+              <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Active status</Form.Label>
               <Form.Select

@@ -22,6 +22,7 @@ const DoctorManager = () => {
     license_number: '',
     status: 'active'
   });
+  const [errors, setErrors] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -29,9 +30,26 @@ const DoctorManager = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailDoctor, setDetailDoctor] = useState(null);
 
+  // ====== VALIDATE FUNCTION ======
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.user_id) newErrors.user_id = 'Please select a doctor user.';
+    if (!form.specialty_id) newErrors.specialty_id = 'Please select a specialty.';
+    if (!form.license_number.trim())
+      newErrors.license_number = 'License number is required.';
+    else if (form.license_number.length < 5)
+      newErrors.license_number = 'License number must be at least 5 characters.';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // ====== CRUD HANDLERS ======
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return; // ⛔ validate trước khi submit
+
     if (editingId) {
       // Update existing doctor
       const updated = doctors.map(d =>
@@ -43,8 +61,10 @@ const DoctorManager = () => {
       const newDoctor = { ...form, id: Date.now() };
       setDoctors([...doctors, newDoctor]);
     }
-    // Reset form
+
+    // Reset
     setForm({ user_id: '', specialty_id: '', license_number: '', status: 'active' });
+    setErrors({});
     setEditingId(null);
     setShowModal(false);
   };
@@ -57,6 +77,7 @@ const DoctorManager = () => {
       status: doctor.status || 'active'
     });
     setEditingId(doctor.id);
+    setErrors({});
     setShowModal(true);
   };
 
@@ -68,12 +89,14 @@ const DoctorManager = () => {
 
   const handleAdd = () => {
     setForm({ user_id: '', specialty_id: '', license_number: '', status: 'active' });
+    setErrors({});
     setEditingId(null);
     setShowModal(true);
   };
 
   const handleClose = () => {
     setForm({ user_id: '', specialty_id: '', license_number: '', status: 'active' });
+    setErrors({});
     setEditingId(null);
     setShowModal(false);
   };
@@ -109,30 +132,30 @@ const DoctorManager = () => {
 
   const doctorUsers = users.filter(u => u.role === 'doctor');
 
-  // ====== FILTER LOGIC (FINAL FIXED VERSION) ======
- const filteredDoctors = doctors.filter(d => {
-  const doctorName = d.user_id
-    ? (users.find(u => u.id === Number(d.user_id))?.name || '')
-    : (d.name || '');
+  // ====== FILTER LOGIC ======
+  const filteredDoctors = doctors.filter(d => {
+    const doctorName = d.user_id
+      ? (users.find(u => u.id === Number(d.user_id))?.name || '')
+      : (d.name || '');
 
-  const specialtyName = d.specialty || '';
-  const doctorStatus = d.status || ''; // ✅ dùng trực tiếp từ doctor
+    const specialtyName = d.specialty || getSpecialtyName(d.specialty_id) || '';
+    const doctorStatus = d.status || '';
 
-  const matchesText =
-    !filterText ||
-    doctorName.toLowerCase().includes(filterText.toLowerCase()) ||
-    specialtyName.toLowerCase().includes(filterText.toLowerCase());
+    const matchesText =
+      !filterText ||
+      doctorName.toLowerCase().includes(filterText.toLowerCase()) ||
+      specialtyName.toLowerCase().includes(filterText.toLowerCase());
 
-  const matchesSpec =
-    !filterSpecialty ||
-    specialtyName.toLowerCase().trim() === filterSpecialty.toLowerCase().trim();
+    const matchesSpec =
+      !filterSpecialty ||
+      specialtyName.toLowerCase().trim() === filterSpecialty.toLowerCase().trim();
 
-  const matchesStatus =
-    !filterStatus ||
-    doctorStatus.toLowerCase().trim() === filterStatus.toLowerCase().trim();
+    const matchesStatus =
+      !filterStatus ||
+      doctorStatus.toLowerCase().trim() === filterStatus.toLowerCase().trim();
 
-  return matchesText && matchesSpec && matchesStatus;
-});
+    return matchesText && matchesSpec && matchesStatus;
+  });
 
   // ====== RENDER ======
   return (
@@ -146,33 +169,33 @@ const DoctorManager = () => {
 
       {/* Filters */}
       <div className="mb-3 d-flex gap-2 flex-wrap">
-  <Form.Control
-    type="text"
-    placeholder="Search by doctor name or specialty..."
-    value={filterText}
-    onChange={e => setFilterText(e.target.value)}
-    style={{ maxWidth: '230px' }}
-  />
-  <Form.Select
-    value={filterSpecialty}
-    onChange={e => setFilterSpecialty(e.target.value)}
-    style={{ maxWidth: '200px' }}
-  >
-    <option value="">-- All Specialties --</option>
-    {specialties.map(s => (
-      <option key={s.id} value={s.name}>{s.name}</option> /* 👈 dùng s.name */
-    ))}
-  </Form.Select>
-  <Form.Select
-    value={filterStatus}
-    onChange={e => setFilterStatus(e.target.value)}
-    style={{ maxWidth: '200px' }}
-  >
-    <option value="">-- All Statuses --</option>
-    <option value="active">Active</option>
-    <option value="inactive">Inactive</option>
-  </Form.Select>
-</div>
+        <Form.Control
+          type="text"
+          placeholder="Search by doctor name or specialty..."
+          value={filterText}
+          onChange={e => setFilterText(e.target.value)}
+          style={{ maxWidth: '230px' }}
+        />
+        <Form.Select
+          value={filterSpecialty}
+          onChange={e => setFilterSpecialty(e.target.value)}
+          style={{ maxWidth: '200px' }}
+        >
+          <option value="">-- All Specialties --</option>
+          {specialties.map(s => (
+            <option key={s.id} value={s.name}>{s.name}</option>
+          ))}
+        </Form.Select>
+        <Form.Select
+          value={filterStatus}
+          onChange={e => setFilterStatus(e.target.value)}
+          style={{ maxWidth: '200px' }}
+        >
+          <option value="">-- All Statuses --</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </Form.Select>
+      </div>
 
       {/* Doctor Table */}
       <Table striped bordered hover responsive>
@@ -198,36 +221,18 @@ const DoctorManager = () => {
                   <Badge bg={doctor.status === 'active' ? 'success' : 'danger'}>
                     {doctor.status === 'active' ? 'Active' : 'Inactive'}
                   </Badge>{' '}
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={() => toggleStatus(doctor.id)}
-                  >
+                  <Button variant="link" size="sm" onClick={() => toggleStatus(doctor.id)}>
                     (Toggle)
                   </Button>
                 </td>
                 <td>
-                  <Button
-                    variant="info"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleShowDetail(doctor)}
-                  >
+                  <Button variant="info" size="sm" className="me-2" onClick={() => handleShowDetail(doctor)}>
                     <i className="bi bi-eye me-1"></i>Details
                   </Button>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleEdit(doctor)}
-                  >
+                  <Button variant="warning" size="sm" className="me-2" onClick={() => handleEdit(doctor)}>
                     <i className="bi bi-pencil me-1"></i>Edit
                   </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(doctor.id)}
-                  >
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(doctor.id)}>
                     <i className="bi bi-trash me-1"></i>Delete
                   </Button>
                 </td>
@@ -235,9 +240,7 @@ const DoctorManager = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={6} className="text-center text-muted">
-                No doctors found.
-              </td>
+              <td colSpan={6} className="text-center text-muted">No doctors found.</td>
             </tr>
           )}
         </tbody>
@@ -255,13 +258,14 @@ const DoctorManager = () => {
               <Form.Select
                 value={form.user_id}
                 onChange={e => setForm({ ...form, user_id: e.target.value })}
-                required
+                isInvalid={!!errors.user_id}
               >
                 <option value="">-- Select Doctor User --</option>
                 {doctorUsers.map(u => (
                   <option key={u.id} value={u.id}>{u.name}</option>
                 ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">{errors.user_id}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -269,13 +273,14 @@ const DoctorManager = () => {
               <Form.Select
                 value={form.specialty_id}
                 onChange={e => setForm({ ...form, specialty_id: e.target.value })}
-                required
+                isInvalid={!!errors.specialty_id}
               >
                 <option value="">-- Select Specialty --</option>
                 {specialties.map(s => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">{errors.specialty_id}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -285,8 +290,9 @@ const DoctorManager = () => {
                 placeholder="Enter license number"
                 value={form.license_number}
                 onChange={e => setForm({ ...form, license_number: e.target.value })}
-                required
+                isInvalid={!!errors.license_number}
               />
+              <Form.Control.Feedback type="invalid">{errors.license_number}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -294,7 +300,6 @@ const DoctorManager = () => {
               <Form.Select
                 value={form.status}
                 onChange={e => setForm({ ...form, status: e.target.value })}
-                required
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -319,16 +324,8 @@ const DoctorManager = () => {
         </Modal.Header>
         {detailDoctor && (
           <Modal.Body>
-            <p>
-              <strong>Name:</strong>{' '}
-              {detailDoctor.user_id ? getUserName(detailDoctor.user_id) : detailDoctor.name}
-            </p>
-            <p>
-              <strong>Specialty:</strong>{' '}
-              {detailDoctor.specialty_id
-                ? getSpecialtyName(detailDoctor.specialty_id)
-                : detailDoctor.specialty}
-            </p>
+            <p><strong>Name:</strong> {detailDoctor.user_id ? getUserName(detailDoctor.user_id) : detailDoctor.name}</p>
+            <p><strong>Specialty:</strong> {detailDoctor.specialty_id ? getSpecialtyName(detailDoctor.specialty_id) : detailDoctor.specialty}</p>
             <p><strong>License Number:</strong> {detailDoctor.license_number}</p>
             <p><strong>Status:</strong> {detailDoctor.status === 'active' ? 'Active' : 'Inactive'}</p>
 

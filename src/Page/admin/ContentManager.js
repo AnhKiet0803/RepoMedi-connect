@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Modal, Button, Form, Table, Badge, Image as RBImage } from "react-bootstrap";
+import { Modal, Button, Form, Table, Badge, Image as RBImage, Alert } from "react-bootstrap";
 import mockData from "../../data/mockData.json";
 
 const ContentManager = () => {
@@ -16,6 +16,7 @@ const ContentManager = () => {
     image: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -29,16 +30,44 @@ const ContentManager = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setErrors((prev) => ({ ...prev, image: "Please select a valid image file." }));
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewImage(reader.result);
       setForm((prev) => ({ ...prev, image: reader.result }));
+      setErrors((prev) => ({ ...prev, image: "" }));
     };
     reader.readAsDataURL(file);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.title.trim()) newErrors.title = "Title is required.";
+    else if (form.title.length < 5) newErrors.title = "Title must be at least 5 characters.";
+
+    if (!form.specialty.trim()) newErrors.specialty = "Specialty is required.";
+    if (!form.summary.trim()) newErrors.summary = "Summary is required.";
+    else if (form.summary.length < 10) newErrors.summary = "Summary must be at least 10 characters.";
+
+    if (!form.content.trim()) newErrors.content = "Content is required.";
+    else if (form.content.length < 20) newErrors.content = "Content must be at least 20 characters.";
+
+    if (!form.image) newErrors.image = "Please upload an image.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     if (editingId) {
       const updated = contents.map((c) =>
         c.id === editingId ? { ...c, ...form } : c
@@ -49,20 +78,22 @@ const ContentManager = () => {
         id: Date.now(),
         ...form,
         date: new Date().toISOString(),
-        published: form.published,
       };
       setContents([...contents, newItem]);
     }
+
     setShowModal(false);
     setEditingId(null);
     setForm({ title: "", specialty: "", summary: "", content: "", published: true, image: "" });
     setPreviewImage(null);
+    setErrors({});
   };
 
   const handleEdit = (c) => {
     setForm(c);
     setEditingId(c.id);
     setPreviewImage(c.image);
+    setErrors({});
     setShowModal(true);
   };
 
@@ -103,7 +134,7 @@ const ContentManager = () => {
     <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">📚 Medical Content Manager</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
+        <Button variant="primary" onClick={() => { setShowModal(true); setErrors({}); }}>
           <i className="bi bi-plus-lg me-2"></i>Add Content
         </Button>
       </div>
@@ -216,8 +247,9 @@ const ContentManager = () => {
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
+                isInvalid={!!errors.title}
               />
+              <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -226,8 +258,9 @@ const ContentManager = () => {
                 type="text"
                 value={form.specialty}
                 onChange={(e) => setForm({ ...form, specialty: e.target.value })}
-                required
+                isInvalid={!!errors.specialty}
               />
+              <Form.Control.Feedback type="invalid">{errors.specialty}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -237,8 +270,9 @@ const ContentManager = () => {
                 rows={2}
                 value={form.summary}
                 onChange={(e) => setForm({ ...form, summary: e.target.value })}
-                required
+                isInvalid={!!errors.summary}
               />
+              <Form.Control.Feedback type="invalid">{errors.summary}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -248,8 +282,9 @@ const ContentManager = () => {
                 rows={5}
                 value={form.content}
                 onChange={(e) => setForm({ ...form, content: e.target.value })}
-                required
+                isInvalid={!!errors.content}
               />
+              <Form.Control.Feedback type="invalid">{errors.content}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -277,6 +312,7 @@ const ContentManager = () => {
                   />
                 )}
               </div>
+              {errors.image && <div className="text-danger mt-1">{errors.image}</div>}
             </Form.Group>
 
             <Form.Group>

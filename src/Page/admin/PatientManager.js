@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Table, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, Table, Row, Col, Alert } from 'react-bootstrap';
 import mockData from '../../data/mockData.json';
 
 const PatientManager = () => {
@@ -7,11 +7,13 @@ const PatientManager = () => {
   const [appointments, setAppointments] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [form, setForm] = useState({ name: '', age: '', gender: '', contact: '' });
+  const [errors, setErrors] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showDetail, setShowDetail] = useState(null);
   const [filters, setFilters] = useState({ gender: '', keyword: '' });
 
+  // ====== Load Data ======
   useEffect(() => {
     const loadedPatients = mockData.patients.map(p => ({
       id: p.id,
@@ -25,6 +27,7 @@ const PatientManager = () => {
     setAppointments(mockData.appointments || []);
   }, []);
 
+  // ====== Filter ======
   const applyFilters = () => {
     let result = [...patients];
     if (filters.gender) {
@@ -42,8 +45,32 @@ const PatientManager = () => {
     applyFilters();
   }, [filters, patients]);
 
+  // ====== Validation ======
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.name.trim()) newErrors.name = 'Full name is required.';
+    if (!form.age || isNaN(form.age) || form.age < 0 || form.age > 120)
+      newErrors.age = 'Please enter a valid age (0–120).';
+    if (!form.gender) newErrors.gender = 'Please select a gender.';
+    if (!form.contact.trim()) {
+      newErrors.contact = 'Contact (email or phone) is required.';
+    } else if (
+      !/^\S+@\S+\.\S+$/.test(form.contact) &&
+      !/^\d{9,11}$/.test(form.contact)
+    ) {
+      newErrors.contact = 'Enter a valid email or phone number.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ====== Submit ======
   const handleSubmit = e => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     if (editingId) {
       const updated = patients.map(p =>
         p.id === editingId ? { ...p, ...form } : p
@@ -54,10 +81,13 @@ const PatientManager = () => {
       const newPatient = { ...form, id: Date.now() };
       setPatients([...patients, newPatient]);
     }
+
     setForm({ name: '', age: '', gender: '', contact: '' });
     setShowModal(false);
+    setErrors({});
   };
 
+  // ====== Edit / Delete ======
   const handleEdit = p => {
     setForm({ name: p.name, age: p.age, gender: p.gender, contact: p.contact });
     setEditingId(p.id);
@@ -74,6 +104,7 @@ const PatientManager = () => {
   const handleAdd = () => {
     setForm({ name: '', age: '', gender: '', contact: '' });
     setEditingId(null);
+    setErrors({});
     setShowModal(true);
   };
 
@@ -81,8 +112,10 @@ const PatientManager = () => {
     setShowModal(false);
     setForm({ name: '', age: '', gender: '', contact: '' });
     setEditingId(null);
+    setErrors({});
   };
 
+  // ====== Render ======
   return (
     <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -92,6 +125,7 @@ const PatientManager = () => {
         </Button>
       </div>
 
+      {/* Filters */}
       <Row className="mb-3">
         <Col md={4}>
           <Form.Select
@@ -113,6 +147,7 @@ const PatientManager = () => {
         </Col>
       </Row>
 
+      {/* Table */}
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -125,28 +160,116 @@ const PatientManager = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPatients.map((patient, index) => (
-            <tr key={patient.id}>
-              <td>{index + 1}</td>
-              <td>{patient.name}</td>
-              <td>{patient.age}</td>
-              <td>{patient.gender}</td>
-              <td>{patient.contact}</td>
-              <td>
-                <Button variant="info" size="sm" className="me-2" onClick={() => setShowDetail(patient)}>
-                  <i className="bi bi-eye me-1"></i>Details
-                </Button>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => handleEdit(patient)}>
-                  <i className="bi bi-pencil me-1"></i>Edit
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(patient.id)}>
-                  <i className="bi bi-trash me-1"></i>Delete
-                </Button>
+          {filteredPatients.length ? (
+            filteredPatients.map((patient, index) => (
+              <tr key={patient.id}>
+                <td>{index + 1}</td>
+                <td>{patient.name}</td>
+                <td>{patient.age}</td>
+                <td>{patient.gender}</td>
+                <td>{patient.contact}</td>
+                <td>
+                  <Button
+                    variant="info"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => setShowDetail(patient)}
+                  >
+                    <i className="bi bi-eye me-1"></i>Details
+                  </Button>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => handleEdit(patient)}
+                  >
+                    <i className="bi bi-pencil me-1"></i>Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(patient.id)}
+                  >
+                    <i className="bi bi-trash me-1"></i>Delete
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={6} className="text-center text-muted">
+                No patients found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
+
+      {/* Modal Add/Edit */}
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{editingId ? 'Edit Patient' : 'Add New Patient'}</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            {Object.keys(errors).length > 0 && (
+              <Alert variant="danger">
+                <ul className="mb-0">
+                  {Object.values(errors).map((e, i) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
+              </Alert>
+            )}
+            <Form.Group className="mb-3">
+              <Form.Label>Full Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter full name"
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Age</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter age"
+                value={form.age}
+                onChange={e => setForm({ ...form, age: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Gender</Form.Label>
+              <Form.Select
+                value={form.gender}
+                onChange={e => setForm({ ...form, gender: e.target.value })}
+              >
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Contact (Email or Phone)</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter email or phone"
+                value={form.contact}
+                onChange={e => setForm({ ...form, contact: e.target.value })}
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit">
+              {editingId ? 'Update' : 'Add'}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
 
       {/* Detail Modal */}
       <Modal show={!!showDetail} onHide={() => setShowDetail(null)} size="lg">
@@ -160,7 +283,6 @@ const PatientManager = () => {
               <p><strong>Age:</strong> {showDetail.age}</p>
               <p><strong>Gender:</strong> {showDetail.gender}</p>
               <p><strong>Contact:</strong> {showDetail.contact}</p>
-
               <hr />
               <h5>📅 Appointments</h5>
               {appointments.filter(a => a.patient_id === showDetail.id).length === 0 ? (
