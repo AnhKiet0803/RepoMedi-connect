@@ -117,9 +117,9 @@ function App() {
               <Route path="*" element={
                 <Layout>
                   <div className="text-center my-5">
-                    <h3 className="text-danger">404 - Không tìm thấy trang</h3>
+                    <h3 className="text-danger">404 - Page Not Found</h3>
                     <Button variant="primary" onClick={() => window.location.href = '/'}>
-                      Quay về trang chủ
+                      Back to Home
                     </Button>
                   </div>
                 </Layout>
