@@ -101,8 +101,10 @@ export default function ConfirmAppointmentPage() {
       if (form.email !== form.confirmEmail)
         e.confirmEmail = "Emails do not match.";
     }
-    if (!form.phone || form.phone.trim().length < 9)
-      e.phone = "Please enter a valid phone number.";
+    if (!/^[0-9]{9,15}$/.test(form.phone))
+        e.phone = "Please enter a valid phone number.";
+    // if (!form.phone || form.phone.trim().length < 9)
+    //   e.phone = "Please enter a valid phone number.";
     if (!(form.day && form.month && form.year))
       e.dob = "Please select your full date of birth.";
     if (!form.gender)

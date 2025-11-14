@@ -656,7 +656,7 @@
         "degree": "Doctor of Philosophy in Medicine (PhD)",
         "gender": "male",
         "license_number": "LIC-0030",
-        "image": "https://randomuser.me/api/portraits/men/77.jpg"
+        "image": "../img/doctor/31.jpg"
       },
       {
         "id": 31,
@@ -668,7 +668,7 @@
         "degree": "Doctor of Medicine (MD)",
         "gender": "male",
         "license_number": "LIC-0031",
-        "image": "https://randomuser.me/api/portraits/women/68.jpg"
+        "image": "../img/doctor/32.jpg"
       },
       {
         "id": 32,
@@ -680,7 +680,7 @@
         "degree": "Doctor of Medicine (MD)",
         "gender": "female",
         "license_number": "LIC-0032",
-        "image": "https://randomuser.me/api/portraits/men/62.jpg"
+        "image": "../img/doctor/33.jpg"
       }
     ],
     "patients": [
