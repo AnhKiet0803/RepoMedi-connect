@@ -13,15 +13,27 @@ export default function Login() {
   const location = useLocation();
   const { login, user, role } = useContext(AuthContext);
 
+  const getStoredCollection = (key) => {
+    try {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue) {
+        return JSON.parse(storedValue);
+      }
+    } catch (storageError) {
+      console.error(`Unable to parse ${key} from localStorage`, storageError);
+    }
+    return Array.isArray(mockData[key]) ? mockData[key] : [];
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
     try {
       //  Gom tất cả user, doctor, patient lại (3 nhóm khác nhau)
-      const users = mockData.users || [];
-      const doctors = mockData.doctors || [];
-      const patients = mockData.patients || [];
+      const users = getStoredCollection("users");
+      const doctors = getStoredCollection("doctors");
+      const patients = getStoredCollection("patients");
 
       //  Hợp nhất không trùng email
       const mergeUsers = (arr1, arr2, arr3) => {

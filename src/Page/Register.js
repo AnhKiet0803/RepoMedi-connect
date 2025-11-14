@@ -21,18 +21,16 @@ export default function Register() {
     const existingPatients = JSON.parse(localStorage.getItem("patients")) || [];
     const existingDoctors = JSON.parse(localStorage.getItem("doctors")) || [];
 
-    // Kiểm tra email đã tồn tại
     const emailExists =
-      existingUsers.some(user => user.email === email) ||
-      existingPatients.some(patient => patient.email === email) ||
-      existingDoctors.some(doctor => doctor.email === email);
+      existingUsers.some((user) => user.email === email) ||
+      existingPatients.some((patient) => patient.email === email) ||
+      existingDoctors.some((doctor) => doctor.email === email);
 
     if (emailExists) {
       alert("This email is already registered!");
       return;
     }
 
-    // Tạo thông tin bệnh nhân
     const newPatient = {
       id: existingPatients.length + 1,
       firstName: name.split(" ")[0],
@@ -45,7 +43,6 @@ export default function Register() {
       dob: "",
     };
 
-    // Tạo thông tin user với role patient
     const newUser = {
       id: existingUsers.length + 1,
       name,
@@ -54,19 +51,23 @@ export default function Register() {
       phone,
       role: "patient",
       status: "active",
-      image: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? "women" : "men"}/${Math.floor(Math.random() * 70) + 1}.jpg`,
+      image: `https://randomuser.me/api/portraits/${
+        Math.random() > 0.5 ? "women" : "men"
+      }/${Math.floor(Math.random() * 70) + 1}.jpg`,
     };
 
-    // Cập nhật localStorage
     const updatedPatients = [...existingPatients, newPatient];
     const updatedUsers = [...existingUsers, newUser];
     localStorage.setItem("patients", JSON.stringify(updatedPatients));
     localStorage.setItem("users", JSON.stringify(updatedUsers));
 
-    setSuccess(true);
+    const authenticatedUser = { ...newUser };
+    localStorage.setItem("currentUser", JSON.stringify(authenticatedUser));
+    sessionStorage.setItem("currentUser", JSON.stringify(authenticatedUser));
+    login(authenticatedUser, authenticatedUser.role);
 
+    setSuccess(true);
     setTimeout(() => {
-      localStorage.setItem("currentUser", JSON.stringify(newUser)); // lưu trạng thái đăng nhập
       navigate("/");
     }, 2000);
   };
@@ -122,14 +123,20 @@ export default function Register() {
             />
           </Form.Group>
           <div className="d-grid gap-2">
-            <Button type="submit" variant="primary">Register</Button>
-            <Button type="button" variant="secondary" onClick={handleCancel}>Cancel</Button>
+            <Button type="submit" variant="primary">
+              Register
+            </Button>
+            <Button type="button" variant="secondary" onClick={handleCancel}>
+              Cancel
+            </Button>
           </div>
         </Form>
         <div className="text-center mt-3">
           <small>
             Already have an account?{" "}
-            <Link to="/login" className="text-primary">Sign in</Link>
+            <Link to="/login" className="text-primary">
+              Sign in
+            </Link>
           </small>
         </div>
       </Card>
